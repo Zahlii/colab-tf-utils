@@ -1,14 +1,16 @@
+_res = get_ipython().run_cell("""
 !pip install tqdm
 !pip install keras
 !rm tboard.py
 !wget https://raw.githubusercontent.com/mixuala/colab_utils/master/tboard.py
 !rm -rf log/
+""")
+
 
 import os
-
 import tboard
 # set paths
-ROOT = %pwd
+ROOT = os.path.abspath('.')
 LOG_DIR = os.path.join(ROOT, 'log')
 
 # will install `ngrok`, if necessary
