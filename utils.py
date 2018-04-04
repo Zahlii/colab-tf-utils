@@ -9,6 +9,7 @@ _res = get_ipython().run_cell("""
 
 import os
 import tboard
+from tqdm import tqdm
 # set paths
 ROOT = os.path.abspath('.')
 LOG_DIR = os.path.join(ROOT, 'log')
