@@ -167,7 +167,7 @@ class GDriveCheckpointer(keras.callbacks.Callback):
         self.best_filename = None
 
     def on_epoch_end(self, epoch, logs={}):
-        l = logs
+        l = dict(logs)
         d = EpochData(epoch, l)
 
         if self.best_epoch is None or self.compare_fn(self.best_epoch, d):
