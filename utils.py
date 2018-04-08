@@ -9,6 +9,7 @@ _res = get_ipython().run_cell("""
 
 import os
 import tboard
+import copy
 from tqdm import tqdm
 # set paths
 ROOT = os.path.abspath('.')
@@ -171,7 +172,7 @@ class GDriveCheckpointer(keras.callbacks.Callback):
         d = EpochData(epoch, l)
 
         if self.best_epoch is None or self.compare_fn(self.best_epoch, d):
-            self.best_epoch = d
+            self.best_epoch = copy.deepcopy(d)
             fn = self.filepath_fn(d)
             if fn is not None and fn:
                 if self.best_filename:
