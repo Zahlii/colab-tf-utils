@@ -135,7 +135,7 @@ class GDriveSync:
         :param file:
         :return:
         """
-        assert file==GDriveItem
+        assert type(file)==GDriveItem
         request = self.drive_service.files().delete(fileId=file.fid)
         request.execute()
 
