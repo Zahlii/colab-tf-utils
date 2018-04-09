@@ -9,6 +9,7 @@ _res = get_ipython().run_cell("""
 
 import os
 import tboard
+import copy
 from tqdm import tqdm
 # set paths
 ROOT = os.path.abspath('.')
@@ -59,13 +60,16 @@ class GDriveSync:
 
         return folders
 
-    def upload_file_to_folder(self, local_file, folder: GDriveItem = None):
+    def upload_file_to_folder(self, local_file, folder = None):
         """
         Upload a local file, optionally to a specific folder in Google Drive
         :param local_file: Path to the local file
         :param folder: (Option) GDriveItem which should be the parent.
         :return:
         """
+        if folder is not None:
+            assert type(folder)==GDriveItem	
+
         file_metadata = {
             'title': local_file,
             'name': local_file
@@ -98,13 +102,14 @@ class GDriveSync:
 
         pbar.update(100 - last_progress)
 
-    def download_file_to_folder(self, remote_file: GDriveItem, path):
+    def download_file_to_folder(self, remote_file, path):
         """
         Download a GDriveItem to a local folder
         :param remote_file:
         :param path:
         :return:
         """
+        assert type(remote_file)==GDriveItem
         request = self.drive_service.files().get_media(fileId=remote_file.fid)
 
         last_progress = 0
@@ -124,12 +129,13 @@ class GDriveSync:
 
         pbar.update(100 - last_progress)
 
-    def delete_file(self, file: GDriveItem):
+    def delete_file(self, file):
         """
         Delete a remote GDriveItem
         :param file:
         :return:
         """
+        assert file==GDriveItem
         request = self.drive_service.files().delete(fileId=file.fid)
         request.execute()
 
@@ -162,11 +168,11 @@ class GDriveCheckpointer(keras.callbacks.Callback):
         self.best_filename = None
 
     def on_epoch_end(self, epoch, logs={}):
-        l = {**logs}
+        l = dict(logs)
         d = EpochData(epoch, l)
 
         if self.best_epoch is None or self.compare_fn(self.best_epoch, d):
-            self.best_epoch = d
+            self.best_epoch = copy.deepcopy(d)
             fn = self.filepath_fn(d)
             if fn is not None and fn:
                 if self.best_filename:
