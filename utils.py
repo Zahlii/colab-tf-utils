@@ -154,7 +154,7 @@ class GDriveCheckpointer(keras.callbacks.Callback):
         - If this function returns None, the checkpoint is skipped. This can be used to skip backing up early epochs.
           If it returns a String path, the model is uploaded into the default GDrive folder with the given file name.
     """
-    def __init__(self, compare_fn, filepath_fn):
+    def __init__(self, compare_fn, filepath_fn, save_optimizer=False):
         assert compare_fn is not None, 'Need a compare function which gets all the losses and evaluation data of two epochs and which needs to return True if the second one is better.'
         assert filepath_fn is not None, 'Need a function that derives a file path based on a dictionary of losses and metrics.'
 
@@ -166,6 +166,7 @@ class GDriveCheckpointer(keras.callbacks.Callback):
         self.filepath_fn = filepath_fn
         self.best_epoch = None
         self.best_filename = None
+        self.save_optimizer = save_optimizer
 
     def on_epoch_end(self, epoch, logs={}):
         l = dict(logs)
@@ -188,5 +189,5 @@ class GDriveCheckpointer(keras.callbacks.Callback):
             print('No improvement.')
 
     def _save_checkpoint(self):
-        self.model.save(self.best_filename)
+        self.model.save(self.best_filename, include_optimizer=self.save_optimizer)
         self.saver.upload_file_to_folder(self.best_filename, self.saver.default_folder)
